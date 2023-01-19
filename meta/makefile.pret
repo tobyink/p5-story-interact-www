@@ -3,7 +3,11 @@
 @prefix : <http://ontologi.es/doap-deps#>.
 
 `Story-Interact-WWW`
-	:runtime-requirement    [ :on "perl 5.010001"^^:CpanId ];
+	:runtime-requirement    [ :on "perl 5.024000"^^:CpanId ];
+	:runtime-requirement    [ :on "Mojolicious"^^:CpanId ];
+	:runtime-requirement    [ :on "Mojo::ShareDir"^^:CpanId ];
+	:runtime-requirement    [ :on "Story::Interact"^^:CpanId ];
+	:runtime-requirement    [ :on "Text::Markdown::Hoedown"^^:CpanId ];
 	:test-requirement       [ :on "Test2::V0"^^:CpanId ];
 	:test-requirement       [ :on "Test2::Tools::Spec"^^:CpanId ];
 	:test-requirement       [ :on "Test2::Require::AuthorTesting"^^:CpanId ];
