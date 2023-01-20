@@ -115,7 +115,7 @@ jobs:
           perl -v
       - name: Install dependencies
         run: |
-          cpanm -n App::GhaProve
+          cpanm -n App::GhaProve File::ShareDir::Install
           cpanm -n --installdeps ./build
       - name: Install extra dependencies
         if: matrix.extra_dependencies || matrix.coverage
