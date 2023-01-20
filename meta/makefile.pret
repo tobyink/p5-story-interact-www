@@ -6,7 +6,7 @@
 	:runtime-requirement    [ :on "perl 5.024000"^^:CpanId ];
 	:runtime-requirement    [ :on "Mojolicious"^^:CpanId ];
 	:runtime-requirement    [ :on "Mojo::ShareDir"^^:CpanId ];
-	:runtime-requirement    [ :on "Story::Interact"^^:CpanId ];
+	:runtime-requirement    [ :on "Story::Interact 0.001004"^^:CpanId ];
 	:runtime-requirement    [ :on "Text::Markdown::Hoedown"^^:CpanId ];
 	:test-requirement       [ :on "Test2::V0"^^:CpanId ];
 	:test-requirement       [ :on "Test2::Tools::Spec"^^:CpanId ];
