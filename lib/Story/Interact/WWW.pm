@@ -54,6 +54,7 @@ sub startup ( $self ) {
 	# API endpoint to read a page
 	{
 		my $page_source = $self->config( 'page_source' );
+		my $munge_state = $self->config( 'state_munge' ) // sub {};
 		my $munge       = $self->config( 'data_munge' ) // sub {};
 		my $render_html = sub ( $page ) {
 			my $markdown = join "\n\n", @{ $page->text };
@@ -62,6 +63,7 @@ sub startup ( $self ) {
 		$self->routes->post( '/api/page/:page' )->to(
 			cb => sub ($c) {
 				my $state = Story::Interact::State->load( $c->req->json( '/state' ) );
+				$munge_state->( $c, $state );
 				my $page = $page_source->get_page( $state, $c->stash( 'page' ) );
 				my %data = (
 					%$page,
