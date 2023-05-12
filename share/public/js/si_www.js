@@ -104,7 +104,7 @@
 			if ( link[2].css_class == 'warning' ) { link_classes = 'text-warning'; }
 			if ( link[2].css_class == 'info' )    { link_classes = 'text-info';    }
 			$( "#next_pages" ).append(
-				'<div><a href="#" class=" ' + link_classes + '" x-data-page-id="' + link_id + '">' + link_desc + '</a></div>'
+				'<div class="my-1"><a href="#" class=" ' + link_classes + '" x-data-page-id="' + link_id + '">' + link_desc + '</a></div>'
 			);
 		}
 		state = page.state;
