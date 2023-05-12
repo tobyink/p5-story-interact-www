@@ -4,22 +4,22 @@
 	var current_page;
 
 	function render_page ( page ) {
+		if ( !page.next_pages || page.next_pages.length==0 ) {
+			alert( 'Under construction!' );
+			return false;
+		}
 		$( "#next_pages" ).html( "" );
 		$( "#html" ).html( page.html );
 		for ( var link of page.next_pages ) {
 			let link_id = link[0];
 			let link_desc = link[1];
-			let link_classes = 'list-group-item-primary';
-			if ( link[2].css_class == 'success' ) { link_classes = 'list-group-item-success'; }
-			if ( link[2].css_class == 'danger' )  { link_classes = 'list-group-item-danger';  }
-			if ( link[2].css_class == 'warning' ) { link_classes = 'list-group-item-warning'; }
-			if ( link[2].css_class == 'info' )    { link_classes = 'list-group-item-info';    }
+			let link_classes = 'text-primary';
+			if ( link[2].css_class == 'success' ) { link_classes = 'text-success'; }
+			if ( link[2].css_class == 'danger' )  { link_classes = 'text-danger';  }
+			if ( link[2].css_class == 'warning' ) { link_classes = 'text-warning'; }
+			if ( link[2].css_class == 'info' )    { link_classes = 'text-info';    }
 			$( "#next_pages" ).append(
-				'<button class="list-group-item list-group-item-action ' + link_classes + '" x-data-page-id="' +
-				link_id +
-				'">' +
-				link_desc +
-				'</button>'
+				'<div><a href="#" class=" ' + link_classes + '" x-data-page-id="' + link_id + '">' + link_desc + '</a></div>'
 			);
 		}
 		state = page.state;
@@ -46,7 +46,8 @@
 	} );
 
 	// Make page links work...
-	$( "#next_pages" ).on( "click", "button", function ( e ) {
+	$( "#next_pages" ).on( "click", "a", function ( e ) {
+		e.preventDefault();
 		let page_id = $( this ).attr( "x-data-page-id" );
 		get_page( page_id );
 	} );
@@ -56,59 +57,120 @@
 		let d = Date.now();
 		let label = prompt( "Please enter a label for the bookmark", "Unlabelled" );
 		let page = current_page;
-		var store = [];
-		let got = localStorage.getItem( STORAGE_KEY );
-		if ( got ) store = JSON.parse( got );
-		store.push( {
-			"date": d,
-			"label": label,
-			"stored_data": page,
+		localforage.getItem( STORAGE_KEY, function ( err, bookmark_storage ) {
+			if ( err ) {
+				console.log( err );
+				alert( "Error storing game" );
+				return;
+			}
+			if ( ! bookmark_storage ) {
+				bookmark_storage = [];
+			}
+			bookmark_storage.push( {
+				"date": d,
+				"label": label,
+				"stored_data": page,
+			} );
+			localforage.setItem( STORAGE_KEY, bookmark_storage, function ( err ) {
+				if ( err ) {
+					console.log( err );
+					alert( "Error storing bookmark" );
+					return;
+				}
+				refresh_bookmark_list();
+			} );
 		} );
-		localStorage.setItem( STORAGE_KEY, JSON.stringify( store ) );
-		refresh_saved_games();
 	} );
 
-	function refresh_saved_games () {
-		var store = [];
-		let got = localStorage.getItem( STORAGE_KEY );
-		if ( got ) store = JSON.parse( got );
-		$( "#saved_games" ).html( "" );
-		for (var i = store.length - 1; i >= 0; i--) {
-			let g = store[i];
-			let d = new Date( g.date );
-			$( "#saved_games" ).append(
-				'<li class="list-group-item list-group-item-light" x-data-saved-game-ix="' + i + '">' +
-				'<div><strong>' + g.label + '</strong></div>' +
-				'<div><small>Timestamp: ' + d.toISOString() + '</small></div>' +
-				'<div><small><a class="text-secondary saved-game-go" href="#">Go to</a></small> &middot; ' +
-				'<small><a class="text-danger saved-game-delete" href="#">Delete</a></small></div>' +
-				'</li>'
-			);
-		}
+	function refresh_bookmark_list () {
+		localforage.getItem( STORAGE_KEY, function ( err, bookmark_storage ) {
+			if ( err ) {
+				console.log( err );
+				alert( "Error reading bookmarks" );
+				return;
+			}
+			if ( ! bookmark_storage ) {
+				bookmark_storage = [];
+			}
+			$( "#saved_games" ).html( "" );
+			for (var i = bookmark_storage.length - 1; i >= 0; i--) {
+				let g = bookmark_storage[i];
+				let d = new Date( g.date );
+				$( "#saved_games" ).append(
+					'<li class="list-group-item text-bg-dark" x-data-saved-game-ix="' + i + '">' +
+					'<div><strong>' + g.label + '</strong> <small style="font-size:75%">' + d.toISOString() + '</small></div>' +
+					'<div><small><a class="text-primary saved-game-go" href="#">Go here</a></small> &middot; ' +
+					'<small><a class="text-success saved-game-save" href="#">Save</a></small> &middot; ' +
+					'<small><a class="text-danger saved-game-delete" href="#">Delete</a></small></div>' +
+					'</li>'
+				);
+			}
+		} );
 	}
 
 	$( "#saved_games" ).on( "click", ".saved-game-go", function ( e ) {
 		let ix = $( this ).parents( "li" ).attr( "x-data-saved-game-ix" );
 		if ( confirm( "Return to bookmark? Any progress you have made since then will be lost." ) ) {
-			var store = [];
-			let got = localStorage.getItem( STORAGE_KEY );
-			if ( got ) store = JSON.parse( got );
-			render_page( store[ix].stored_data );
+			localforage.getItem( STORAGE_KEY, function ( err, bookmark_storage ) {
+				if ( err ) {
+					console.log( err );
+					alert( "Error reading bookmarks" );
+					return;
+				}
+				render_page( bookmark_storage[ix].stored_data );
+				$( '#sidebar' ).offcanvas( 'hide' );
+			} );
 		}
 	} );
-
+	
+	$( "#saved_games" ).on( "click", ".saved-game-save", function ( e ) {
+		let ix = $( this ).parents( "li" ).attr( "x-data-saved-game-ix" );
+		if ( confirm( "Replace this bookmark with the current page?" ) ) {
+			let page = current_page;
+			localforage.getItem( STORAGE_KEY, function ( err, bookmark_storage ) {
+				if ( err ) {
+					console.log( err );
+					alert( "Error storing bookmark" );
+					return;
+				}
+				bookmark_storage[ix].stored_data = page;
+				bookmark_storage[ix].date = Date.now();
+				localforage.setItem( STORAGE_KEY, bookmark_storage, function ( err ) {
+					if ( err ) {
+						console.log( err );
+						alert( "Error storing bookmark" );
+						return;
+					}
+					refresh_bookmark_list();
+				} );
+			} );
+		}
+	} );
+	
 	$( "#saved_games" ).on( "click", ".saved-game-delete", function ( e ) {
 		let ix = $( this ).parents( "li" ).attr( "x-data-saved-game-ix" );
 		if ( confirm( "Remove this bookmark?" ) ) {
-			var store = [];
-			let got = localStorage.getItem( STORAGE_KEY );
-			if ( got ) store = JSON.parse( got );
-			store.splice( ix, 1 );
-			localStorage.setItem( STORAGE_KEY, JSON.stringify( store ) );
-			refresh_saved_games();
+			localforage.getItem( STORAGE_KEY, function ( err, bookmark_storage ) {
+				if ( err ) {
+					console.log( err );
+					alert( "Error deleting stored bookmark" );
+					return;
+				}
+				console.log( bookmark_storage );
+				bookmark_storage.splice( ix, 1 );
+				console.log( bookmark_storage );
+				localforage.setItem( STORAGE_KEY, bookmark_storage, function ( err ) {
+					if ( err ) {
+						console.log( err );
+						alert( "Error deleting stored bookmark" );
+						return;
+					}
+					refresh_bookmark_list();
+				} );
+			} );
 		}
 	} );
 
-	refresh_saved_games();
+	refresh_bookmark_list();
 
 } )( jQuery );
