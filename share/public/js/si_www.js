@@ -5,7 +5,7 @@
 
 	function render_page ( page ) {
 		if ( !page.next_pages || page.next_pages.length==0 ) {
-			alert( 'Under construction!' );
+			alert( 'No further pages!' );
 			return false;
 		}
 		$( "#next_pages" ).html( "" );
