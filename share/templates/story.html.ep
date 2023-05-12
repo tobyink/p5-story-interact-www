@@ -25,9 +25,12 @@
 					<div class="offcanvas-body d-lg-block">
 						<div id="bookmarks" class="mb-3">
 							<h3 class="h5">Bookmarks</h3>
-							<button id="save" type="button" class="btn btn-secondary">Add bookmark</button>
-							<div class="list-group text-bg-dark mt-3" id="saved_games"></div>
+							<button id="save" type="button" class="btn btn-primary btn-sm">Save to device</button>
+							<button id="save_server" type="button" class="btn btn-secondary btn-sm d-none">Save to server</button>
+							<div class="list-group text-bg-dark mt-3" id="client_bookmarks"></div>
+							<div class="list-group text-bg-dark mt-3" id="server_bookmarks"></div>
 						</div>
+						<div id="login"></div>
 					</div>
 				</aside>
 			</div>
@@ -36,12 +39,14 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.10.0/localforage.min.js" integrity="sha512-+BMamP0e7wn39JGL8nKAZ3yAQT2dL5oaXWr4ZYlTGkKOaoXM/Yj7c4oy50Ngz5yoUutAG17flueD4F6QpTlPng==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script>
-			const STORY_ID    = '<%= $story_id %>';
-			const API         = '<%= $api %>';
-			const STORAGE_KEY = '<%= $storage_key %>';
+			const STORY_ID       = '<%= $story_id %>';
+			const API            = '<%= $api %>';
+			const STORAGE_KEY    = '<%= $storage_key %>';
+			const SERVER_STORAGE = <%= $server_storage ? 'true' : 'false' %>;
+			const SERVER_SIGNUPS = <%= $server_signups ? 'true' : 'false' %>;
 			
 			function after_render_page ( page ) {
-				return true;
+				return false;
 			}
 		</script>
 		<script src="/js/si_www.js"></script>

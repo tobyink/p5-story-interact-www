@@ -8,6 +8,8 @@
 	:runtime-requirement    [ :on "Mojo::ShareDir"^^:CpanId ];
 	:runtime-requirement    [ :on "Story::Interact 0.001004"^^:CpanId ];
 	:runtime-requirement    [ :on "Text::Markdown::Hoedown"^^:CpanId ];
+	:runtime-requirement    [ :on "Digest::SHA"^^:CpanId ];
+	:runtime-requirement    [ :on "Nanoid"^^:CpanId ];
 	:test-requirement       [ :on "Test2::V0"^^:CpanId ];
 	:test-requirement       [ :on "Test2::Tools::Spec"^^:CpanId ];
 	:test-requirement       [ :on "Test2::Require::AuthorTesting"^^:CpanId ];
