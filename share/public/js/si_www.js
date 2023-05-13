@@ -113,9 +113,13 @@
 	}
 
 	function get_page ( page_id ) {
+		let obj = { "state": state };
+		if ( session && session.session ) {
+			obj.session = session.session;
+		}
 		$.ajax( API + '/story/' + encodeURIComponent(STORY_ID) + '/page/' + encodeURIComponent(page_id), {
 			method: 'POST',
-			data: JSON.stringify( { "state": state } ),
+			data: JSON.stringify( obj ),
 			contentType: 'application/json',
 			success: render_page,
 			dataType: 'json',

@@ -127,9 +127,12 @@ sub startup ( $self ) {
 					$state->params( {} );
 				}
 				
+				local $Story::Interact::SESSION;
+				local $Story::Interact::DATABASE;
+				
 				if ( $c->req->json->{session} ) {
-					$state->world->{SESSION}  = $self->$get_session( $c );
-					$state->world->{DATABASE} = $self->config( 'database' );
+					$Story::Interact::SESSION  = $self->$get_session( $c );
+					$Story::Interact::DATABASE = $self->config( 'database' );
 				}
 				
 				my $page = $page_source->get_page( $state, $page_id );
