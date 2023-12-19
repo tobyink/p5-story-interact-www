@@ -5,7 +5,7 @@ use warnings;
 package Story::Interact::WWW;
 
 our $AUTHORITY = 'cpan:TOBYINK';
-our $VERSION   = '0.001006';
+our $VERSION   = '0.002000';
 
 use constant DISTRIBUTION => 'Story-Interact-WWW';
 
